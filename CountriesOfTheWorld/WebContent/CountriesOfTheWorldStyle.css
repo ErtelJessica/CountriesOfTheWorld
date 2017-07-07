@@ -1,8 +1,62 @@
 @CHARSET "ISO-8859-1";
-h1 {
-    color: #d42836;
+
+body{
+	font-family: Verdana, Geneva, sans-serif;
+	font-size: 16pt;
+	text-align: center;
 }
 
-th{
-	text-align: left;
+h1 {
+	color: #d42836;
+	font-size: 50pt;
+}
+
+
+
+table, th , td  {
+  border: 1px solid grey;
+  border-collapse: collapse;
+  padding: 5px;
+}
+
+table{
+	margin: auto;
+}
+
+th {
+	color: white;
+	background-color: #d42836;
+	height: 30px;
+}
+
+table tr:nth-child(odd) {
+  background-color: #f1f1f1;
+}
+table tr:nth-child(even) {
+  background-color: #ffffff;
+}
+
+#flagObject {
+	witdh: 200px;
+	height: 100px;
+}
+
+#flagObject+svg {
+	width: 50%;
+	background-color: #ffff00;
+}
+
+
+.headerSortDown:after {
+	content: ' ';
+	position: relative;
+	left: 5px;
+	border: 7px solid transparent;
+	top: 12px;
+	border-top-color: white;
+}
+
+.headerSortDown{
+	cursor: pointer;
+	padding-right: 10px;
 }

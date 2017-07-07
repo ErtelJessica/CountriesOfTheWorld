@@ -2,6 +2,7 @@
 <html>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+
 <head>
 <meta charset="ISO-8859-1">
 
@@ -10,30 +11,88 @@
 <title>Countries of the world</title>
 </head>
 <body>
+
 	<h1>Countries of the world</h1>
-	<div ng-app="myApp" ng-controller="myCtrl">
-		<table>
-			<thead>
-				<tr>
-					<th>Name</th>
-					<th>Population</th>
+	<div data-ng-app="myApp" data-ng-controller="myCtrl">
+		<div data-ng-show="showListView">
+			<p>
+				Search for Name: <input type="text" data-ng-model="searchString">
+			</p>
+			<table>
+				<thead>
+					<tr>
+						<th></th>
+						<th class="headerSortDown" data-ng-click="orderByContent('name')">Name</th>
+						<th class="headerSortDown"
+							data-ng-click="orderByContent('population')">Population</th>
+					</tr>
+				</thead>
+
+				<tr
+					data-ng-repeat="country in data | orderBy:contentToOrder:isSecond | filter:{'name':searchString}"
+					data-ng-click="showDetails(country)">
+					<td>{{country.flag}} <!--  	<object id="flagObject" data="{{x.flag}}" type="image/svg"> -->
+						<!---Fallback---> <!--			Ihr Browser kann leider kein svg darstellen!
+					</object> -->
+					</td>
+
+					<td>{{ country.name }}</td>
+					<td>{{ country.population }}</td>
 				</tr>
-			</thead>
-			<tr ng-repeat="x in data">
-				<td>{{ x.name }}</td>
-				<td>{{ x.population }}</td>
-			</tr>
-		</table>
+			</table>
+		</div>
+
+		<div data-ng-show="!showListView">
+			<h2>{{countrySelected.name}}</h2>
+			<table>
+				<tr data-ng-repeat="(key, data) in countrySelected">
+					<td>{{key}}</td>
+					<td>{{data}}</td>
+				</tr>
+			</table>
+			<!-- ui-gmap-google-map center="map.center" zoom="map.zoom"></ui-gmap-google-map -->
+			<button data-ng-click="showList()">back to overview</button>
+			<p>Noticed any mistakes? Please contact us:</p>
+			<form>
+				Name: <input type="text"> <br> E-Mail: <input
+					type="email"> <br>
+				<textarea rows="20" cols="100">Enter your message here.</textarea>
+				<!--  button>send</button-->
+			</form>
+		</div>
 	</div>
 
 	<script>
 		var app = angular.module('myApp', []);
+		var lastClick;
+		var isSecond = false;
 		app.controller('myCtrl', function($scope, $http) {
+			$scope.showListView = "true";
 			$http.get("https://restcountries.eu/rest/v2/all").then(
 					function(response) {
 						$scope.data = response.data;
 					});
+			$scope.orderByContent = function(x) {
+				if (lastClick == x) {
+					isSecond = true;
+					lastClick = ' '
+				} else {
+					$scope.contentToOrder = x;
+				}
+
+			};
+			$scope.showDetails = function(x) {
+				$scope.showListView = !$scope.showListView;
+				//$scope.countrySelected = x;
+				$scope.countrySelected = (({ name,flag,region,capital,population,currencies,timezones}) => ({ name,flag,region,capital,population,currencies,timezones }))(x);
+			};
+			$scope.showList = function() {
+				$scope.showListView = !$scope.showListView;
+			};
+			
+			 $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 8 };
 		});
 	</script>
+
 </body>
 </html>
