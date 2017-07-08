@@ -1,9 +1,19 @@
 @CHARSET "ISO-8859-1";
 
-body{
+/*for HTML5 support*/
+header, section, footer, aside, nav, main, article, figure {
+	display: block;
+}
+
+body {
 	font-family: Verdana, Geneva, sans-serif;
 	font-size: 16pt;
 	text-align: center;
+}
+
+footer {
+	padding-top: 30px;
+	font-size: 12pt;
 }
 
 h1 {
@@ -11,15 +21,13 @@ h1 {
 	font-size: 50pt;
 }
 
-
-
-table, th , td  {
-  border: 1px solid grey;
-  border-collapse: collapse;
-  padding: 5px;
+table, th, td {
+	border: 1px solid grey;
+	border-collapse: collapse;
+	padding: 5px;
 }
 
-table{
+table {
 	margin: auto;
 }
 
@@ -30,10 +38,11 @@ th {
 }
 
 table tr:nth-child(odd) {
-  background-color: #f1f1f1;
+	background-color: #f1f1f1;
 }
+
 table tr:nth-child(even) {
-  background-color: #ffffff;
+	background-color: #ffffff;
 }
 
 #flagObject {
@@ -46,7 +55,6 @@ table tr:nth-child(even) {
 	background-color: #ffff00;
 }
 
-
 .headerSortDown:after {
 	content: ' ';
 	position: relative;
@@ -56,7 +64,41 @@ table tr:nth-child(even) {
 	border-top-color: white;
 }
 
-.headerSortDown{
+hr {
+	border: solid #d42836 1px;
+	height: 1px;
+	width: 100%;
+}
+
+.headerSortDown {
 	cursor: pointer;
 	padding-right: 10px;
+}
+
+.left-arrow {
+	position: relative;
+	background-color: #d42836;
+	color:white;
+}
+.left-arrow:after {
+	content: '';
+	display: block;  
+	position: absolute;
+	right: 100%;
+	top: 50%;
+	margin-top: -9px;
+	width: 0;
+	height: 0;
+	border-top: 10px solid transparent;
+	border-right: 10px solid #d42836;
+	border-bottom: 10px solid transparent;
+	border-left: 10px solid transparent;
+}
+
+
+/*section.left{
+	float: left;
+}*/
+aside {
+	float: right;
 }

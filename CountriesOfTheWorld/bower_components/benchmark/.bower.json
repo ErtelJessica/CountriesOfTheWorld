@@ -1,0 +1,14 @@
+{
+  "name": "benchmark",
+  "homepage": "https://github.com/bestiejs/benchmark.js",
+  "version": "2.1.4",
+  "_release": "2.1.4",
+  "_resolution": {
+    "type": "version",
+    "tag": "2.1.4",
+    "commit": "e116278cb2580ef10953382238dd422756a5c386"
+  },
+  "_source": "https://github.com/bestiejs/benchmark.js.git",
+  "_target": "*",
+  "_originalSource": "benchmark"
+}
