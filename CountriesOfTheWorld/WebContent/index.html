@@ -4,60 +4,62 @@
 <script type="text/javascript"
 	src="../bower_components/angular/angular.min.js"></script>
 <script type="text/javascript"
-	src="../bower_components/angular-google-maps/dist/angular-google-maps.min.js"></script>
-<script type="text/javascript"
 	src="../bower_components/angularjs-socialshare/dist/angular-socialshare.min.js"></script>
-
-
-
+<script type="text/javascript" src="../bower_components/d3/d3.min.js"></script>
 <head>
 <meta charset="ISO-8859-1">
 
 <link rel="stylesheet" type="text/css"
 	href="CountriesOfTheWorldStyle.css">
 <link rel="stylesheet" type="text/css" href="socialMedia.css">
+<link rel="stylesheet" type="text/css" href="sortingArrows.css">
+<link rel="stylesheet" type="text/css" href="listView.css">
+<link rel="stylesheet" type="text/css" href="detailView.css">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<!--link rel="stylesheet" type="text/css"
-	href="http://720kb.github.io/csshelper/assets/ext/src/helper.css" -->
 <title>Countries of the world</title>
 </head>
+
 <body data-ng-app="myApp" data-ng-controller="myCtrl">
 
 	<header>
+		<hr>
 		<h1>Countries of the world</h1>
+		<hr>
 	</header>
 
 	<nav data-ng-show="!showListView">
+		<h2>{{countrySelected.name}}</h2>
 		<button class="left-arrow" data-ng-click="showList()">back to
 			overview</button>
-		<h2>{{countrySelected.name}}</h2>
 	</nav>
 
 	<section data-ng-show="showListView">
 		<p>
 			Search for Name: <input type="search" data-ng-model="searchString">
+			<button type="reset" data-ng-click="reset()">x</button>
 		</p>
 		<table>
 			<thead>
 				<tr>
 					<th></th>
-					<th class="headerSortDown" data-ng-click="orderByContent('name')">Name</th>
-					<th class="headerSortDown"
-						data-ng-click="orderByContent('population')">Population</th>
+					<th class="headerSort" data-ng-click="orderByContent('name')">Name
+						<span class="arrow-up"></span> <span class="arrow-down"></span>
+					</th>
+					<th class="headerSort" data-ng-click="orderByContent('population')">Population
+						<span class="arrow-up"></span> <span class="arrow-down"></span>
+					</th>
 				</tr>
 			</thead>
 
 			<tr
 				data-ng-repeat="country in data | orderBy:contentToOrder:isSecond | filter:{'name':searchString}"
 				data-ng-click="showDetails(country)">
-				<td>{{country.flag}} <!--  	<object id="flagObject" data="{{country.flag}}" type="image/svg"> -->
-					<!---Fallback---> <!--			Ihr Browser kann leider kein svg darstellen!
-					</object> -->
-				</td>
+				<td><img id={{toId(country.name)}}>{{printFlag(toId(country.name),
+					country.flag, 40, 60)}}</td>
 
 				<td>{{ country.name }}</td>
-				<td>{{ country.population }}</td>
+				<td>{{ country.population.toLocaleString('en-US')}}</td>
 			</tr>
 		</table>
 
@@ -67,12 +69,8 @@
 
 		<!-- ui-gmap-google-map center="map.center" zoom="map.zoom"></ui-gmap-google-map  -->
 		<aside data-ng-show="!showListView">
-			<!--  {{countrySelected.flag}} -->
-			<object id="flagObject" data="{{countrySelected.flag}}"
-				type="image/svg">
-				<!---Fallback--->
-				Ihr Browser kann leider kein svg darstellen!
-			</object>
+			<img id="{{toId(countrySelected.name)+'Details'}}">{{printFlag(toId(countrySelected.name)+'Details',countrySelected.flag,
+			100, 150)}}
 		</aside>
 
 		<table>
@@ -81,17 +79,20 @@
 				<td>{{data}}</td>
 			</tr>
 		</table>
-		Share country: <a socialshare="" socialshare-provider="twitter"
-			socialshare-text="Look at this Country:"
-			socialshare-url="#"> <i class="fa fa-twitter"></i>
-		</a> <a socialshare="" socialshare-provider="facebook"
-			socialshare-url="#"> <i class="fa fa-facebook"></i>
-		</a> <a socialshare="" socialshare-provider="google"
-			socialshare-url="#"> <i
+		<a data-socialshare="" data-socialshare-provider="twitter"
+			data-socialshare-text="Look at this Country:"
+			data-socialshare-url="{{currentLocation}}"> <i
+			class="fa fa-twitter"></i>
+		</a> <a data-socialshare="" data-socialshare-provider="facebook"
+			data-socialshare-url="http://www.tresmo.de"> <!-- doesn't work with lokal path -->
+			<i class="fa fa-facebook"></i>
+		</a> <a data-socialshare="" data-socialshare-provider="google"
+			data-socialshare-url="{{currentLocation}}"> <i
 			class="fa fa-google-plus"></i>
 		</a>
-
+		<p data-ng-binding="curr">
 	</section>
+
 
 
 	<section data-ng-show="!showListView">
@@ -100,6 +101,8 @@
 			Name: <input type="text"> <br> E-Mail: <input
 				type="email"> <br>
 			<textarea rows="10" cols="50">Enter your message here.</textarea>
+			<br>
+			<button type="submit">send</button>
 			<!--  button>send</button-->
 		</form>
 	</section>
@@ -113,32 +116,46 @@
 				someone@example.com</a>.
 		</p>-->
 		<p>
-			Content from: <a href="http://restcountries.eu"> restcountries.eu</a>.
+			Content from: <a href="https://restcountries.eu">
+				restcountries.eu</a>.
 		</p>
 		<hr></hr>
 	</footer>
 
+
 	<script>
 		var app = angular.module('myApp', ['720kb.socialshare']);
-		var lastClick;
-		var isSecond = false;
-		app.controller('myCtrl', function($scope, $http) {
+		var countryClickCount = 0;
+		var populationClickCount = 0;
+		
+		app.controller('myCtrl', function($scope, $http, $location) {
 			$scope.showListView = "true";
+			$scope.isSecond = false;
 			$http.get("https://restcountries.eu/rest/v2/all").then(
 					function(response) {
 						$scope.data = response.data;
 					});
 			$scope.orderByContent = function(x) {
-				if (lastClick == x) {
-					isSecond = true;
-					lastClick = ' '
+				if (x !== 'population') {
+					countryClickCount += 1;
+					populationClickCount = 0;
 				} else {
-					$scope.contentToOrder = x;
+					populationClickCount += 1;
+					countryClickCount = 0;
 				}
+				
+				if((countryClickCount > 0 && countryClickCount % 2 == 0) || (populationClickCount > 0 && populationClickCount % 2 == 0)){
+					$scope.isSecond = true;
+				}else {
+					$scope.isSecond = false;
+				}
+				
+				$scope.contentToOrder = x;
 
 			};
 			$scope.showDetails = function(x) {
 				$scope.showListView = !$scope.showListView;
+				$scope.currentLocation = $location.absUrl();
 				//$scope.countrySelected = x;
 				$scope.countrySelected = (({ name,flag,region,capital,population,currencies,timezones}) => ({ name,flag,region,capital,population,currencies,timezones }))(x);
 			};
@@ -146,9 +163,38 @@
 				$scope.showListView = !$scope.showListView;
 			};
 			
+			$scope.reset = function() {
+		        $scope.searchString = "";
+		    };
+		    
+		    $scope.toId =  function(text){
+		    	return text.replace(/[^a-zA-Z ]|\s+/g, "");
+		    }
+		    
+		    $scope.printFlag = function(id,url,height,widht){
+		    	console.log("#"+id);
+		    	console.log(url);
+		    	
+		    	d3.select("#"+id)
+				.attr("src",url)
+				.attr("width", widht)
+				.attr("height", height)
+		    
+		    }
+		    	
 			// $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 8 };
-		});
+			//in bower.json
+		// "jquery": "*",
+		// "bootstrap" : "*",
+		// "angular-google-maps" : "*",
+		// "platform": "*",
+		// "benchmark": "*",
+		// "lodash" : "*",
+		// "angular-socialshare": "*"
+		});	
+		
 	</script>
+
 
 </body>
 </html>

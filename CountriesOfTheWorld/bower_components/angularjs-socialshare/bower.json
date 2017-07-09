@@ -16,7 +16,16 @@
     ".eslintrc",
     ".jscsrc",
     "gulpfiles.js",
-    "node_modules"
+    "node_modules",
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "conf",
+    "gulpfile.js",
+    "index.html",
+    "assets"
   ],
   "keywords": [
     "social",
@@ -30,16 +39,5 @@
     "./dist/angular-socialshare.min.js"
   ],
   "license": "MIT",
-  "homepage": "http://720kb.github.io/angular-socialshare/",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests",
-    "conf",
-    "gulpfile.js",
-    "index.html",
-    "assets"
-  ]
+  "homepage": "http://720kb.github.io/angular-socialshare/"
 }

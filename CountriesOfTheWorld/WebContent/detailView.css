@@ -1,0 +1,26 @@
+@CHARSET "ISO-8859-1";
+
+.left-arrow {
+	position: relative;
+	background-color: #d42836;
+	color: white;
+}
+
+.left-arrow:after {
+	content: '';
+	display: block;
+	position: absolute;
+	right: 100%;
+	top: 50%;
+	margin-top: -9px;
+	width: 0;
+	height: 0;
+	border-top: 10px solid transparent;
+	border-right: 10px solid #d42836;
+	border-bottom: 10px solid transparent;
+	border-left: 10px solid transparent;
+}
+
+h2{
+	vertical-align: middle;
+}
