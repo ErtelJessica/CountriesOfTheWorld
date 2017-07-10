@@ -5,13 +5,15 @@ header, section, footer, aside, nav, main, article, figure {
 	display: block;
 }
 
-body {
+body, html {
 	font-family: Verdana, Geneva, sans-serif;
 	text-align: center;
-	vertical-align: middle;
+	height: 100%;
+	margin: 0;
+	padding: 0;
 }
 
-nav{
+nav {
 	vertical-align: middle;
 }
 
@@ -24,12 +26,16 @@ section {
 	font-size: 14px;
 }
 
-/*section.left{
+section.left {
 	float: left;
-}*/
+	width: 50%;
+	margin: auto;
+}
+
 aside {
 	float: right;
-	right: 50%;
+	width: 50%;
+	margin: auto;
 }
 
 footer {

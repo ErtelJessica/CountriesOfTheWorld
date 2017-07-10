@@ -21,6 +21,17 @@
 	border-left: 10px solid transparent;
 }
 
-h2{
+h2 {
 	vertical-align: middle;
+}
+
+#map {
+	margin: auto;
+	height: 100%;
+	width: 100%;
+}
+
+#map:after {
+	height: 100%;
+	width: 50%;
 }

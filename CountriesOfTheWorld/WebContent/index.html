@@ -6,8 +6,13 @@
 <script type="text/javascript"
 	src="../bower_components/angularjs-socialshare/dist/angular-socialshare.min.js"></script>
 <script type="text/javascript" src="../bower_components/d3/d3.min.js"></script>
+<script src="../bower_components/ngmap/build/scripts/ng-map.min.js"></script>
+<script
+	src="http://maps.google.com/maps/api/js?key=AIzaSyD-lGcTPWzqMmRNHdpJ7XxlB5FyYmoDnw8"></script>
+
 <head>
 <meta charset="ISO-8859-1">
+
 
 <link rel="stylesheet" type="text/css"
 	href="CountriesOfTheWorldStyle.css">
@@ -29,9 +34,9 @@
 	</header>
 
 	<nav data-ng-show="!showListView">
-		<h2>{{countrySelected.name}}</h2>
 		<button class="left-arrow" data-ng-click="showList()">back to
 			overview</button>
+		<h2>{{countrySelected.name}}</h2>
 	</nav>
 
 	<section data-ng-show="showListView">
@@ -42,7 +47,7 @@
 		<table>
 			<thead>
 				<tr>
-					<th></th>
+					<th data-ng-click="orderByContent('area')"></th>
 					<th class="headerSort" data-ng-click="orderByContent('name')">Name
 						<span class="arrow-up"></span> <span class="arrow-down"></span>
 					</th>
@@ -55,30 +60,38 @@
 			<tr
 				data-ng-repeat="country in data | orderBy:contentToOrder:isSecond | filter:{'name':searchString}"
 				data-ng-click="showDetails(country)">
-				<td><img id={{toId(country.name)}}>{{printFlag(toId(country.name),
+				<td><img id="{{toId(country.name)}}">{{printFlag(toId(country.name),
 					country.flag, 40, 60)}}</td>
 
-				<td>{{ country.name }}</td>
+				<td>{{ country.name }} {{country.area}}</td>
 				<td>{{ country.population.toLocaleString('en-US')}}</td>
 			</tr>
 		</table>
 
 	</section>
 
-	<section data-ng-show="!showListView">
+	<section style="overflow: hidden;" data-ng-show="!showListView">
+		<section class="left">
+			<table>
+				<tr data-ng-repeat="(key, data) in countrySelected">
+					<td>{{key}}</td>
+					<td>{{data}}</td>
+				</tr>
+			</table>
 
-		<!-- ui-gmap-google-map center="map.center" zoom="map.zoom"></ui-gmap-google-map  -->
+			<p data-ng-binding="curr">
+		</section>
+
 		<aside data-ng-show="!showListView">
 			<img id="{{toId(countrySelected.name)+'Details'}}">{{printFlag(toId(countrySelected.name)+'Details',countrySelected.flag,
 			100, 150)}}
+			<ng-map id="map" center="{{countrySelected.name}}"
+				zoom="{{calculateZoomByArea(countrySelected.area)}}"></ng-map>
 		</aside>
 
-		<table>
-			<tr data-ng-repeat="(key, data) in countrySelected">
-				<td>{{key}}</td>
-				<td>{{data}}</td>
-			</tr>
-		</table>
+	</section>
+
+	<section data-ng-show="!showListView">
 		<a data-socialshare="" data-socialshare-provider="twitter"
 			data-socialshare-text="Look at this Country:"
 			data-socialshare-url="{{currentLocation}}"> <i
@@ -90,12 +103,6 @@
 			data-socialshare-url="{{currentLocation}}"> <i
 			class="fa fa-google-plus"></i>
 		</a>
-		<p data-ng-binding="curr">
-	</section>
-
-
-
-	<section data-ng-show="!showListView">
 		<p>Noticed any mistakes? Please contact us:</p>
 		<form>
 			Name: <input type="text"> <br> E-Mail: <input
@@ -121,16 +128,49 @@
 		</p>
 		<hr></hr>
 	</footer>
-
-
 	<script>
-		var app = angular.module('myApp', ['720kb.socialshare']);
+		var app = angular.module('myApp', ['720kb.socialshare','ngMap']);
 		var countryClickCount = 0;
 		var populationClickCount = 0;
+		 
 		
-		app.controller('myCtrl', function($scope, $http, $location) {
+		app.controller('myCtrl', function($scope, $http, $location, $anchorScroll, $timeout, NgMap) {
 			$scope.showListView = "true";
 			$scope.isSecond = false;
+			
+			//Get map to load when opend
+			NgMap.getMap().then((map) => {
+				   $timeout(() => {google.maps.event.trigger(map, 'resize')}, 1000)
+				 });
+			
+			$scope.calculateZoomByArea = function(area){
+			var zoom = 13;
+				if(area > 6){
+					zoom--;
+				} if (area > 60){
+					zoom--;
+				}if (area > 450){
+					zoom--;
+				}if (area > 15000){
+					zoom--;
+				}if (area > 35000){
+					zoom--;
+				}if (area > 65000){
+					zoom--;
+				}if (area > 200000){
+					zoom--;
+				}if (area > 500000){
+					zoom--;
+				}if (area > 1000000){
+					zoom--;
+				} if (area > 9000000){
+					zoom--;
+				}
+				console.log(zoom);
+				return zoom;
+				
+			}
+			
 			$http.get("https://restcountries.eu/rest/v2/all").then(
 					function(response) {
 						$scope.data = response.data;
@@ -156,11 +196,16 @@
 			$scope.showDetails = function(x) {
 				$scope.showListView = !$scope.showListView;
 				$scope.currentLocation = $location.absUrl();
-				//$scope.countrySelected = x;
-				$scope.countrySelected = (({ name,flag,region,capital,population,currencies,timezones}) => ({ name,flag,region,capital,population,currencies,timezones }))(x);
+				$location.hash(null);
+				$anchorScroll();
+				$scope.countrySelected = (({ name,flag,region,capital,population,currencies,timezones,area}) => ({ name,flag,region,capital,population,currencies,timezones,area }))(x);
 			};
+			
 			$scope.showList = function() {
 				$scope.showListView = !$scope.showListView;
+				$location.hash($scope.toId($scope.countrySelected.name));
+				$anchorScroll();
+
 			};
 			
 			$scope.reset = function() {
@@ -168,19 +213,19 @@
 		    };
 		    
 		    $scope.toId =  function(text){
-		    	return text.replace(/[^a-zA-Z ]|\s+/g, "");
+		    	if(text !== undefined){
+		    		return text.replace(/[^a-zA-Z ]|\s+/g, "");
+		    	}
 		    }
 		    
-		    $scope.printFlag = function(id,url,height,widht){
-		    	console.log("#"+id);
-		    	console.log(url);
-		    	
+		    $scope.printFlag = function(id,url,height,widht){    	
 		    	d3.select("#"+id)
 				.attr("src",url)
 				.attr("width", widht)
 				.attr("height", height)
 		    
 		    }
+		    
 		    	
 			// $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 8 };
 			//in bower.json
@@ -194,7 +239,5 @@
 		});	
 		
 	</script>
-
-
 </body>
 </html>
