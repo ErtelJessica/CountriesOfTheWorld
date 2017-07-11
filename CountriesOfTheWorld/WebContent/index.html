@@ -44,74 +44,87 @@
 			Search for Name: <input type="search" data-ng-model="searchString">
 			<button type="reset" data-ng-click="reset()">x</button>
 		</p>
+
+
 		<table>
 			<thead>
 				<tr>
-					<th data-ng-click="orderByContent('area')"></th>
-					<th class="headerSort" data-ng-click="orderByContent('name')">Name
-						<span class="arrow-up"></span> <span class="arrow-down"></span>
+					<th style="width: 5%;" data-ng-click="orderByContent('area')"></th>
+					<th style="width: 50%;" class="headerSort"
+						data-ng-click="orderByContent('name')">Name <span
+						class="arrow-up"></span> <span class="arrow-down"></span>
 					</th>
-					<th class="headerSort" data-ng-click="orderByContent('population')">Population
-						<span class="arrow-up"></span> <span class="arrow-down"></span>
+					<th style="width: 45%;" class="headerSort"
+						data-ng-click="orderByContent('population')">Population <span
+						class="arrow-up"></span> <span class="arrow-down"></span>
 					</th>
 				</tr>
 			</thead>
+			<tbody>
+				<tr
+					data-ng-repeat="country in data | orderBy:contentToOrder:isSecond | filter:{'name':searchString}"
+					data-ng-click="showDetails(country)">
+					<td><img id="{{toId(country.name)}}">{{printFlag(toId(country.name),
+						country.flag, 40, 60)}}</td>
 
-			<tr
-				data-ng-repeat="country in data | orderBy:contentToOrder:isSecond | filter:{'name':searchString}"
-				data-ng-click="showDetails(country)">
-				<td><img id="{{toId(country.name)}}">{{printFlag(toId(country.name),
-					country.flag, 40, 60)}}</td>
-
-				<td>{{ country.name }} {{country.area}}</td>
-				<td>{{ country.population.toLocaleString('en-US')}}</td>
-			</tr>
+					<td>{{ country.name }} {{country.area}}</td>
+					<td>{{ country.population.toLocaleString('en-US')}}</td>
+				</tr>
+			</tbody>
 		</table>
+
 
 	</section>
 
 	<section style="overflow: hidden;" data-ng-show="!showListView">
 		<section class="left">
-			<table>
-				<tr data-ng-repeat="(key, data) in countrySelected">
-					<td>{{key}}</td>
-					<td>{{data}}</td>
-				</tr>
-			</table>
+			<img id="{{toId(countrySelected.name)+'Details'}}"
+				style="float: right;">{{printFlag(toId(countrySelected.name)+'Details',countrySelected.flag,
+			100, 150)}}
 
-			<p data-ng-binding="curr">
+			<ul class="detailsList">
+				<li data-ng-repeat="(key, data) in trimDataToShow(countrySelected)">
+					<span class="key">{{key}} :</span>
+					{{calculateTextByKeyData(key,data)}}
+				</li>
+			</ul>
+
+			<a data-socialshare="" data-socialshare-provider="twitter"
+				data-socialshare-text="Look at this Country:"
+				data-socialshare-url="{{currentLocation}}"> <i
+				class="fa fa-twitter"></i>
+			</a> <a data-socialshare="" data-socialshare-provider="facebook"
+				data-socialshare-url="http://www.tresmo.de"> <!-- doesn't work with lokal path -->
+				<i class="fa fa-facebook"></i>
+			</a> <a data-socialshare="" data-socialshare-provider="google"
+				data-socialshare-url="{{currentLocation}}"> <i
+				class="fa fa-google-plus"></i>
+			</a>
 		</section>
 
 		<aside data-ng-show="!showListView">
-			<img id="{{toId(countrySelected.name)+'Details'}}">{{printFlag(toId(countrySelected.name)+'Details',countrySelected.flag,
-			100, 150)}}
-			<ng-map id="map" center="{{countrySelected.name}}"
-				zoom="{{calculateZoomByArea(countrySelected.area)}}"></ng-map>
+			<div id="mapDiv">
+				<ng-map id="map" center="{{countrySelected.latlng}}"
+					zoom="{{calculateZoomByArea(countrySelected.area)}}"></ng-map>
+			</div>
 		</aside>
 
 	</section>
 
 	<section data-ng-show="!showListView">
-		<a data-socialshare="" data-socialshare-provider="twitter"
-			data-socialshare-text="Look at this Country:"
-			data-socialshare-url="{{currentLocation}}"> <i
-			class="fa fa-twitter"></i>
-		</a> <a data-socialshare="" data-socialshare-provider="facebook"
-			data-socialshare-url="http://www.tresmo.de"> <!-- doesn't work with lokal path -->
-			<i class="fa fa-facebook"></i>
-		</a> <a data-socialshare="" data-socialshare-provider="google"
-			data-socialshare-url="{{currentLocation}}"> <i
-			class="fa fa-google-plus"></i>
-		</a>
-		<p>Noticed any mistakes? Please contact us:</p>
-		<form>
-			Name: <input type="text"> <br> E-Mail: <input
-				type="email"> <br>
-			<textarea rows="10" cols="50">Enter your message here.</textarea>
-			<br>
-			<button type="submit">send</button>
-			<!--  button>send</button-->
-		</form>
+		<p>
+			Noticed any mistakes?
+			<button data-ng-click="showFormular()">Please contact us</button>
+		</p>
+		<div data-ng-show="!showForm">
+			<form>
+				Name: <input type="text" required> <br> E-Mail: <input
+					type="email" required> <br>
+				<textarea rows="10" cols="50" required>Enter your message here.</textarea>
+				<br>
+				<button type="submit">send</button>
+			</form>
+		</div>
 	</section>
 
 
@@ -132,16 +145,71 @@
 		var app = angular.module('myApp', ['720kb.socialshare','ngMap']);
 		var countryClickCount = 0;
 		var populationClickCount = 0;
-		 
+		var width = document.getElementById('mapDiv').clientWidth;
+		var height = 300;
 		
+    	console.log(height);
+    	console.log(width);
+    	var pixelArea = height * width;
+    	var metersPerPixel = 6378137 / width;
+    	var kilomentersPerPixel = metersPerPixel / 1000;
+    	var metersPerPixelQuadrat = metersPerPixel * metersPerPixel;
+    	var kilomentersPerPixelQuadrat = kilomentersPerPixel * kilomentersPerPixel;
+    	console.log(metersPerPixel);
+    	
+    	var calculateZoomArea = function(zoom){
+    		return pixelArea * kilomentersPerPixelQuadrat * Math.pow(0.5, zoom * 2);
+    	}
+    	
+    	var plain = Array(15).fill(0);
+    	var zoomAreaList = plain.map(function(count, index, zoomAreaList) {
+    		return calculateZoomArea(index);
+    	});
+    	
+    	zoomAreaList.forEach(function(area,index, zoomAreaList) {
+    		console.log("A"+index+": " +area);
+    	});
+    	
 		app.controller('myCtrl', function($scope, $http, $location, $anchorScroll, $timeout, NgMap) {
 			$scope.showListView = "true";
+			$scope.showForm = "false";
 			$scope.isSecond = false;
+			$scope.countrySelected = {name: "", population:"", region: "", currencies:[""], timezones : [""], area: 10, latlng: [0, 0]}; //default data
+			console.log("init: " + $scope.showForm);
+			
+			$http.get("https://restcountries.eu/rest/v2/all").then(
+					function(response) {
+						$scope.data = response.data;
+					});
 			
 			//Get map to load when opend
+	
 			NgMap.getMap().then((map) => {
-				   $timeout(() => {google.maps.event.trigger(map, 'resize')}, 1000)
-				 });
+				google.maps.event.addListenerOnce(map, 'idle', function () {
+				    google.maps.event.trigger(map, 'resize');
+				    /*var center = map.getCenter();
+				    map.setCenter({lat: center.lat(), lng: center.lng()});
+				    google.maps.event.trigger(map, "center_changed");*/
+				});
+			});
+			
+			$scope.calculateTextByKeyData = function(key,data){
+				var value = data;
+				
+				if(key == "population"){
+					value = data.toLocaleString('en-US');
+				}
+				if( key == "currencies"){
+					
+					var tempValue = data.map( function(currency, index, data) {return currency.name});
+					value = tempValue.reduce( function(result, name, index, data) { return result + ", " + name; });
+				}
+				if(key == "timezones"){
+					value = data.reduce( function(result, timezone, index, data) { return result + ", " + timezone; });
+				}
+				
+				return value;
+			}
 			
 			$scope.calculateZoomByArea = function(area){
 			var zoom = 13;
@@ -166,15 +234,29 @@
 				} if (area > 9000000){
 					zoom--;
 				}
+				 if (area > 11000000){
+						zoom--;
+					}
+				 
+				
 				console.log(zoom);
 				return zoom;
+			
+				/*var lessElem = zoomAreaList.find(function(element, index, array){
+					element < area;
+				});
+				
+				console.log("less: "+lessElem);
+				
+				zoom = zoomAreaList.indexOf(lessElem) - 1;
+				console.log(zoom);
+				
+				return zoom;*/
+			    				
 				
 			}
 			
-			$http.get("https://restcountries.eu/rest/v2/all").then(
-					function(response) {
-						$scope.data = response.data;
-					});
+			
 			$scope.orderByContent = function(x) {
 				if (x !== 'population') {
 					countryClickCount += 1;
@@ -191,15 +273,19 @@
 				}
 				
 				$scope.contentToOrder = x;
-
 			};
+			
 			$scope.showDetails = function(x) {
 				$scope.showListView = !$scope.showListView;
 				$scope.currentLocation = $location.absUrl();
 				$location.hash(null);
 				$anchorScroll();
-				$scope.countrySelected = (({ name,flag,region,capital,population,currencies,timezones,area}) => ({ name,flag,region,capital,population,currencies,timezones,area }))(x);
-			};
+				$scope.countrySelected = (({ name,flag,region,capital,population,currencies,timezones,area,latlng}) => ({ name,flag,region,capital,population,currencies,timezones,area,latlng }))(x);
+			}
+			
+			$scope.trimDataToShow = function(countrySelected){
+				return (({region,capital,population,currencies,timezones}) => ({ region,capital,population,currencies,timezones}))(countrySelected);
+			}
 			
 			$scope.showList = function() {
 				$scope.showListView = !$scope.showListView;
@@ -207,6 +293,12 @@
 				$anchorScroll();
 
 			};
+			
+			$scope.showFormular = function(){
+				
+				$scope.showForm = !$scope.showForm;
+				console.log("showFormular: " + $scope.showForm);
+			}
 			
 			$scope.reset = function() {
 		        $scope.searchString = "";
@@ -226,16 +318,10 @@
 		    
 		    }
 		    
-		    	
-			// $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 8 };
-			//in bower.json
-		// "jquery": "*",
-		// "bootstrap" : "*",
-		// "angular-google-maps" : "*",
-		// "platform": "*",
-		// "benchmark": "*",
-		// "lodash" : "*",
-		// "angular-socialshare": "*"
+		   
+
+		  
+		    
 		});	
 		
 	</script>

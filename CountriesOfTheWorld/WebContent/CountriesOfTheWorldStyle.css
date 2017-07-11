@@ -28,14 +28,19 @@ section {
 
 section.left {
 	float: left;
-	width: 50%;
+	width: 46.5%;
 	margin: auto;
+	margin-left: 2%;
+	padding: 1%;
+
 }
 
 aside {
 	float: right;
-	width: 50%;
+	width: 47%;
 	margin: auto;
+	margin-right: 2%;
+	border: solid black 1px;
 }
 
 footer {

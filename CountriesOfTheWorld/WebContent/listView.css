@@ -1,13 +1,28 @@
 @CHARSET "ISO-8859-1";
 
+/**center table*/
+table {
+	table-layout: fixed;
+	margin: auto;
+}
+
+/*scrollable*/
+tbody {
+	display: block;
+	overflow-y: scroll;
+	height: 300px;
+}
+
+thead tr {
+	display: block;
+	position: relative;
+}
+
+/*color and font*/
 table, th, td {
 	border: 1px solid grey;
 	border-collapse: collapse;
 	padding: 5px;
-}
-
-table {
-	margin: auto;
 }
 
 th {
