@@ -3,6 +3,7 @@
 /**center table*/
 table {
 	table-layout: fixed;
+	max-width: 100%;
 	margin: auto;
 }
 
@@ -13,16 +14,45 @@ tbody {
 	height: 300px;
 }
 
+thead {
+	display: table-row-group;
+	border: none;
+}
+
 thead tr {
 	display: block;
 	position: relative;
 }
 
+tbody tr:hover {
+	cursor: pointer;
+}
+
 /*color and font*/
-table, th, td {
-	border: 1px solid grey;
+table {
 	border-collapse: collapse;
 	padding: 5px;
+	text-align: center;
+}
+
+/*color and font*/
+th, td {
+	border: 1px solid #0C3C64;
+	border-collapse: collapse;
+	padding: 5px;
+	text-align: center;
+}
+
+.firstCol{
+	min-width: 103px
+}
+
+.secondCol{
+	min-width: 375px
+}
+
+.thirdCol{
+	min-width: 105px
 }
 
 th {
@@ -32,9 +62,9 @@ th {
 }
 
 table tr:nth-child(odd) {
-	background-color: #f1f1f1;
+	background-color: #ffffff;
 }
 
 table tr:nth-child(even) {
-	background-color: #ffffff;
+	background-color: #e2e2e4;
 }

@@ -1,12 +1,12 @@
 @CHARSET "ISO-8859-1";
 
-.left-arrow {
+.leftArrowButton {
 	position: relative;
 	background-color: #d42836;
 	color: white;
 }
 
-.left-arrow:after {
+.leftArrowButton:after {
 	content: '';
 	display: block;
 	position: absolute;
@@ -19,6 +19,29 @@
 	border-right: 10px solid #d42836;
 	border-bottom: 10px solid transparent;
 	border-left: 10px solid transparent;
+}
+
+.downArrowButton {
+	position: relative;
+	background: #d42836;
+	width: 140px;
+	text-align: center;
+	color: white;
+}
+
+.downArrowButton:after {
+	content: '';
+	display: block;  
+	position: absolute;
+	left: 0;
+	top: 100%;
+	width: 0;
+	height: 0;
+	border-top: 15px solid #d42836;
+	border-right: 70px solid transparent;
+	border-bottom: 0 solid transparent;
+	border-left: 70px solid transparent;
+	margin-bottom: 5px;
 }
 
 h2 {
