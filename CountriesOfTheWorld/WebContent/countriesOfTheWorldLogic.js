@@ -17,6 +17,15 @@ var defaultCountry = {name: "", population:"", region: "", currencies:[""], time
 var countrySortClickCount = 0;
 var populationSortClickCount = 0; 
 
+app.filter('highlight', function($sce) {
+    return function(text, phrase) {
+        if (phrase){
+        	text = text.replace(new RegExp('('+phrase+')', 'gi'), '<span class="highlighted">$1</span>');
+        }
+        return $sce.trustAsHtml(text);
+      }
+    })
+
 app.controller('countriesOfTheWorldCtrl', function($scope, $http, $location, $anchorScroll, $window, NgMap) {
 	
 	$scope.showListView = true;
@@ -122,8 +131,8 @@ app.controller('countriesOfTheWorldCtrl', function($scope, $http, $location, $an
     
     function calculateMapAreaInKmForAnyZoom(zoom){
     	/*
-    	 * google standard: zoom + 1 -> metersPerPixel * 0,5
-    	 */
+		 * google standard: zoom + 1 -> metersPerPixel * 0,5
+		 */
         return calculateMapAreaInKmForZoom0() * Math.pow(0.5, zoom * 2); 
     }
     
@@ -136,10 +145,10 @@ app.controller('countriesOfTheWorldCtrl', function($scope, $http, $location, $an
     }
     
 	function calculateZoomByCountryAreaInKm(area){
-		if(area == undefined){
-			return getAverageZoom();
-		}else{
+		if(area){
 			return getZoomLevelOfLeastSiutableZoomArea(area);
+		}else{
+			return getAverageZoom();
 		}
 	}
 	
@@ -187,26 +196,28 @@ app.controller('countriesOfTheWorldCtrl', function($scope, $http, $location, $an
 	
     function formatTextForPrint(key,data){
         var value = data;
-        switch (key) {
-        case "population":
-            value = data.toLocaleString('en-US');
-            break;
-        case "currencies":
-        	var tempValue = data.map( function(currency, index, data) {return currency.name});
-        	value = tempValue.reduce( function(result, name, index, data) { return result + ", " + name; });
-        	break;
-        case "timezones":
-        	value = data.reduce( function(result, timezone, index, data) { return result + ", " + timezone; });
-        	break;
-        default:
-        	break;
+        if(data){
+	        switch (key) {
+	        case "population":
+	            value = data.toLocaleString('en-US');
+	            break;
+	        case "currencies":
+	        	var tempValue = data.map( function(currency, index, data) { return currency.name});
+	        	value = tempValue.reduce( function(result, name, index, data) { return result + ", " + name; });
+	        	break;
+	        case "timezones":
+	        	value = data.reduce( function(result, timezone, index, data) { return result + ", " + timezone; });
+	        	break;
+	        default:
+	        	break;
+	        }
         }
 		return value;
 	}
 	
 
 	function changeTextToIdFormat(text){
-    	if(text !== undefined){
+    	if(text){
     		return text.replace(/[^a-zA-Z ]|\s+/g, "");
     	}
     }

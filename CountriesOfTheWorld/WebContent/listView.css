@@ -36,7 +36,32 @@ thead tr {
 
 tbody tr:hover {
 	cursor: pointer;
+	border-top: 2px solid #0C3C64;
+	border-bottom:2px solid #0C3C64;
+	box-shadow: 0 5px 3px -4px rgba(0, 0, 0, 0.5) inset;
+	font-weight: bolder;
 }
+
+.highlighted{
+	background-color: yellow;
+}
+
+/*tbody tr:hover td {
+	-moz-box-shadow: 0 4px 2px -3px rgba(0, 0, 0, 0.5) inset;
+    -webkit-box-shadow: 0 4px 2px -3px rgba(0, 0, 0, 0.5) inset;
+    box-shadow: 0 4px 2px -3px rgba(0, 0, 0, 0.5) inset;
+}*/
+
+/*tbody tr:hover td:first-child {
+    -moz-box-shadow: 4px 4px 2px -3px rgba(0, 0, 0, 0.5) inset;
+    -webkit-box-shadow: 4px 4px 2px -3px rgba(0, 0, 0, 0.5) inset;
+    box-shadow: 4px 4px 2px -3px rgba(0, 0, 0, 0.5) inset;
+}
+tbody tr:hover td:last-child {
+    -moz-box-shadow: 0 4px 2px -3px rgba(0, 0, 0, 0.5) inset;
+    -webkit-box-shadow: 0 4px 2px -3px rgba(0, 0, 0, 0.5) inset;
+    box-shadow: 0 4px 2px -3px rgba(0, 0, 0, 0.5) inset;
+}*/
 
 th {
 	color: white;

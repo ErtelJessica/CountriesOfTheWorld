@@ -74,11 +74,11 @@
 			</thead>
 			<tbody>
 				<tr
-					data-ng-repeat="country in data | orderBy:contentToOrder:sortDown | filter:{'name':searchString}"
+					data-ng-repeat="country in data | orderBy:contentToOrder:sortDown | filter:{'name':searchString}" 
 					data-ng-click="showDetailsView(country)">
 					<td class="firstCol"><img id="{{country.id}}">{{insertFlagByUrl(country.id,
 						country.flag, 40)}}</td>
-					<td class="secondCol">{{ country.name }}</td>
+					<td class="secondCol" data-ng-bind-html="country.name | highlight:searchString">{{ country.name }}</td>
 					<td class="thirdCol">{{ country.population}}</td>
 				</tr>
 			</tbody>
