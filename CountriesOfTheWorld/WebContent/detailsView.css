@@ -31,7 +31,7 @@
 
 .downArrowButton:after {
 	content: '';
-	display: block;  
+	display: block;
 	position: absolute;
 	left: 0;
 	top: 100%;
@@ -44,8 +44,8 @@
 	margin-bottom: 5px;
 }
 
-h2 {
-	vertical-align: middle;
+.twoElementSection {
+	overflow: hidden;
 }
 
 #map {
@@ -59,13 +59,17 @@ h2 {
 	width: 50%;
 }
 
-.detailsList{
+.detailsList {
 	list-style-type: none;
 	text-align: left;
 	padding-left: 30%;
 }
 
-.key{
+.keyText {
 	color: #d42836;
 	font-weight: bold;
+}
+
+.detailsFlag {
+	float: right;
 }

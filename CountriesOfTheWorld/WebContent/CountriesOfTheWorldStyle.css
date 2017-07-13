@@ -5,11 +5,11 @@ header, section, footer, aside, nav, main, article, figure {
 	display: block;
 }
 
-button{
+button {
 	cursor: pointer;
 }
 
-input{
+input {
 	margin-top: 5px;
 	margin-bottom: 5px;
 }
@@ -41,7 +41,6 @@ section.left {
 	margin: auto;
 	margin-left: 2%;
 	padding: 1%;
-
 }
 
 aside {
@@ -67,26 +66,6 @@ hr {
 	width: 100%;
 }
 
-/*#flagObject {
-	witdh: 200px;
-	height: 100px;
+h2 {
+	vertical-align: middle;
 }
-
-#flagObject+svg {
-	width: 50%;
-	background-color: #ffff00;
-}*/
-
-/*.headerSortDown:after {
-	content: ' ';
-	position: relative;
-	left: 5px;
-	border: 7px solid transparent;
-	top: 12px;
-	border-top-color: white;
-}*/
-
-/*.headerSortDown {
-	cursor: pointer;
-	padding-right: 10px;
-}*/

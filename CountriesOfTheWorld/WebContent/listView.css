@@ -1,22 +1,32 @@
 @CHARSET "ISO-8859-1";
 
-/**center table*/
 table {
 	table-layout: fixed;
 	max-width: 100%;
 	margin: auto;
-}
-
-/*scrollable*/
-tbody {
-	display: block;
-	overflow-y: scroll;
-	height: 300px;
+	border-collapse: collapse;
+	padding: 5px;
+	text-align: center;
 }
 
 thead {
 	display: table-row-group;
 	border: none;
+}
+
+tbody {
+	display: block;
+	overflow-y: scroll;
+	height: 300px;
+	border-bottom: 1px solid #0C3C64;
+}
+
+table tr:nth-child(odd) {
+	background-color: #ffffff;
+}
+
+table tr:nth-child(even) {
+	background-color: #e2e2e4;
 }
 
 thead tr {
@@ -28,14 +38,12 @@ tbody tr:hover {
 	cursor: pointer;
 }
 
-/*color and font*/
-table {
-	border-collapse: collapse;
-	padding: 5px;
-	text-align: center;
+th {
+	color: white;
+	background-color: #d42836;
+	height: 20px;
 }
 
-/*color and font*/
 th, td {
 	border: 1px solid #0C3C64;
 	border-collapse: collapse;
@@ -43,28 +51,15 @@ th, td {
 	text-align: center;
 }
 
-.firstCol{
+/* workaround for scrollable table*/
+.firstCol {
 	min-width: 103px
 }
 
-.secondCol{
+.secondCol {
 	min-width: 375px
 }
 
-.thirdCol{
+.thirdCol {
 	min-width: 105px
-}
-
-th {
-	color: white;
-	background-color: #d42836;
-	height: 20px;
-}
-
-table tr:nth-child(odd) {
-	background-color: #ffffff;
-}
-
-table tr:nth-child(even) {
-	background-color: #e2e2e4;
 }

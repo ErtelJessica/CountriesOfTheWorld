@@ -20,13 +20,13 @@
 <link rel="stylesheet" type="text/css" href="socialMedia.css">
 <link rel="stylesheet" type="text/css" href="sortingArrows.css">
 <link rel="stylesheet" type="text/css" href="listView.css">
-<link rel="stylesheet" type="text/css" href="detailView.css">
+<link rel="stylesheet" type="text/css" href="detailsView.css">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <title>Countries of the world</title>
 </head>
 
-<body data-ng-app="countriesOfTheWorldApp"
+<body data-ng-app="countriesOfTheWorldApp" 
 	data-ng-controller="countriesOfTheWorldCtrl">
 
 	<header>
@@ -38,13 +38,15 @@
 	<nav data-ng-show="!showListView">
 		<button class="leftArrowButton" data-ng-click="hideDetailsView()">back
 			to overview</button>
-		<h2>{{currentName}}</h2>
+		<h2>{{countrySelected.name}}</h2>
 	</nav>
+
 
 	<section data-ng-show="showListView">
 		<p>
-			Search for Name: <input type="search" data-ng-model="searchString">
-			<button type="reset" data-ng-click="reset()">x</button>
+			Search for Name: <input id="search" type="search"
+				data-ng-model="searchString">
+			<button type="reset" data-ng-click="resetSearchString()">x</button>
 		</p>
 
 
@@ -52,13 +54,13 @@
 			<thead>
 				<tr>
 					<th class="firstCol"></th>
-					<!--  th data-ng-click="orderByContent('area')"></th-->
-					<th class="headerSort secondCol" data-ng-click="orderByContent('name')">
-						Name <span class="arrow-up"></span> <span class="arrow-down"></span>
-
+					<th class="headerSort secondCol"
+						data-ng-click="orderTableByContent('name')">Name <span
+						class="arrowUp"></span> <span class="arrowDown"></span>
 					</th>
-					<th class="headerSort thirdCol" data-ng-click="orderByContent('population')">
-						Population <span class="arrow-up"></span> <span class="arrow-down"></span>
+					<th class="headerSort thirdCol"
+						data-ng-click="orderTableByContent('unformattedPopulation')">Population
+						<span class="arrowUp"></span> <span class="arrowDown"></span>
 
 					</th>
 				</tr>
@@ -67,7 +69,7 @@
 				<tr
 					data-ng-repeat="country in data | orderBy:contentToOrder:sortDown | filter:{'name':searchString}"
 					data-ng-click="showDetailsView(country)">
-					<td class="firstCol"><img id="{{country.id}}">{{printFlag(country.id,
+					<td class="firstCol"><img id="{{country.id}}">{{insertFlagByUrl(country.id,
 						country.flag, 40)}}</td>
 					<td class="secondCol">{{ country.name }}</td>
 					<td class="thirdCol">{{ country.population}}</td>
@@ -76,14 +78,14 @@
 		</table>
 	</section>
 
-	<section style="overflow: hidden;" data-ng-show="!showListView">
+	<section class="twoElementSection" data-ng-show="!showListView">
 		<section class="left">
-			<img id="{{countrySelected.id+'Details'}}" style="float: right;">{{printFlag(countrySelected.id+'Details',countrySelected.flag,
+			<img class="detailsFlag" id="{{countrySelected.id+'Details'}}" >{{insertFlagByUrl(countrySelected.id+'Details',countrySelected.flag,
 			100)}}
 
 			<ul class="detailsList">
-				<li data-ng-repeat="(key, data) in getDataToShow()"><span
-					class="key">{{key}} :</span> {{data}}</li>
+				<li data-ng-repeat="(key, data) in getDataToShowInDetailView()"><span
+					class="keyText">{{key}} :</span> {{data}}</li>
 			</ul>
 
 			<a data-socialshare="" data-socialshare-provider="twitter"
@@ -107,16 +109,17 @@
 	</section>
 
 	<section data-ng-show="!showListView">
+		<p>Noticed any mistakes?</p>
 		<p>
-			Noticed any mistakes?<br>
-			<button class="downArrowButton" data-ng-click="showFormular()">Please
-				contact us</button>
+			<button class="downArrowButton"
+				data-ng-click="showComplaintFormular()">Please contact us</button>
 		</p>
-		<div data-ng-show="!showForm">
-			<form>
-				Name: <input type="text" required> <br> E-Mail: <input
-					type="email" required> <br>
-				<textarea rows="10" cols="50" required>Enter your message here.</textarea>
+		<div data-ng-show="showComplaintForm">
+			<form name="complaintForm">
+				Name: <input id="name" type="text" required> <br>
+				E-Mail: <input id="email" type="email" required> <br>
+				<textarea id="compliant" rows="10" cols="50"
+					placeholder="Enter your message here." data-ng-required></textarea>
 				<br>
 				<button type="submit">send</button>
 			</form>

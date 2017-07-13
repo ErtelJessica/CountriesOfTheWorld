@@ -1,33 +1,11 @@
 @CHARSET "ISO-8859-1";
 
-/*
-.headerSortDown:after, .headerSortUp:after {
-	content: ' ';
-	position: relative;
-	left: 5px;
-	border: 7px solid transparent;
-}
-
-.headerSortUp:after {
-	top: 0px;
-	border-top-color: white;
-}
-
-.headerSortDown:after {
-	bottom: 10px;
-	border-bottom-color: white;
-}
-
-.headerSortDown, .headerSortUp {
-	cursor: pointer;
-	padding-right: 10px;
-}*/
 .headerSort {
 	cursor: pointer;
 	padding-right: 10px;
 }
 
-.arrow-up {
+.arrowUp {
 	bottom: 18px;
 	left: 5px;
 	position: relative;
@@ -40,7 +18,7 @@
 	margin: 0 0 0 0;
 }
 
-.arrow-down {
+.arrowDown {
 	top: 18px;
 	right: 7px;
 	position: relative;
