@@ -9,11 +9,11 @@
 <script src="../bower_components/ngmap/build/scripts/ng-map.min.js"></script>
 <script
 	src="http://maps.google.com/maps/api/js?key=AIzaSyD-lGcTPWzqMmRNHdpJ7XxlB5FyYmoDnw8"></script>
+<link rel="stylesheet" href="../bower_components/qunit/qunit/qunit.js">
 
 
 <head>
 <meta charset="ISO-8859-1">
-
 
 <link rel="stylesheet" type="text/css"
 	href="CountriesOfTheWorldStyle.css">
@@ -23,10 +23,11 @@
 <link rel="stylesheet" type="text/css" href="detailsView.css">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 <title>Countries of the world</title>
 </head>
 
-<body data-ng-app="countriesOfTheWorldApp" 
+<body data-ng-app="countriesOfTheWorldApp"
 	data-ng-controller="countriesOfTheWorldCtrl">
 
 	<header>
@@ -43,6 +44,13 @@
 
 
 	<section data-ng-show="showListView">
+		<p>
+			Welcome to "Countries of the world"! This website offers a list of
+			all countries in the world. <br> The list can be sorted either
+			by name or by population and you can search any country you're
+			looking for. <br> To see more details of a country you only have
+			to click on it.
+		</p>
 		<p>
 			Search for Name: <input id="search" type="search"
 				data-ng-model="searchString">
@@ -80,7 +88,7 @@
 
 	<section class="twoElementSection" data-ng-show="!showListView">
 		<section class="left">
-			<img class="detailsFlag" id="{{countrySelected.id+'Details'}}" >{{insertFlagByUrl(countrySelected.id+'Details',countrySelected.flag,
+			<img class="detailsFlag" id="{{countrySelected.id+'Details'}}">{{insertFlagByUrl(countrySelected.id+'Details',countrySelected.flag,
 			100)}}
 
 			<ul class="detailsList">
@@ -136,6 +144,7 @@
 		</p>
 		<hr></hr>
 	</footer>
+
 	<script type="text/javascript" src="countriesOfTheWorldLogic.js"></script>
 </body>
 </html>
