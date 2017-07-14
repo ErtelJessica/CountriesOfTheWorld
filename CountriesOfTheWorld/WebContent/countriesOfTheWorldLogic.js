@@ -14,17 +14,17 @@ var maxZoomLevel = 19; // default value by google maps
 var zoomlevelToAreaInKmMap;
 
 var defaultCountry = {name: "", population:"", region: "", currencies:[""], timezones : [""], area: 10, latlng: [1, 1]};
-var countrySortClickCount = 0;
-var populationSortClickCount = 0; 
+var countryNameSortClickCount = 0;
+var countryUnformattedPopulationSortClickCount = 0; 
 
 app.filter('highlight', function($sce) {
-    return function(text, phrase) {
+    return function(text, phrase){
         if (phrase){
         	text = text.replace(new RegExp('('+phrase+')', 'gi'), '<span class="highlighted">$1</span>');
         }
         return $sce.trustAsHtml(text);
       }
-    })
+    });
 
 app.controller('countriesOfTheWorldCtrl', function($scope, $http, $location, $anchorScroll, $window, NgMap) {
 	
@@ -33,7 +33,7 @@ app.controller('countriesOfTheWorldCtrl', function($scope, $http, $location, $an
 	$scope.countrySelected =  defaultCountry;
 	adjustViewForNewDimesion();
 	
-	angular.element($window).on('resize', adjustViewForNewDimesion);
+	angular.element($window).on('resize', adjustViewForNewDimesion());
 	
 	 $http.get("https://restcountries.eu/rest/v2/all?fields=name;population;flag;capital;region;currencies;timezones;latlng;area").then(
 		 function(response) { 
@@ -173,49 +173,43 @@ app.controller('countriesOfTheWorldCtrl', function($scope, $http, $location, $an
         zoomlevelToAreaInKmMap = calculateZoomMapAreaListFrom0ToMaxZoomLevel(maxZoomLevel);
     }
     	
+    function isSecondClickOnSortElement(sortElementName){
+    	calculateClicks(sortElementName);
+    	return countryNameIsSecondClick() || countryUnformattedPopulationIsSecondClick();
+    }
     
     function calculateClicks(clickedElementName){
         switch (clickedElementName) {
         case 'name':
-            countrySortClickCount += 1;
-            populationSortClickCount = 0;
+        	raiseCountryNameSortClickCount();
             break;
         case 'unformattedPopulation':
-            populationSortClickCount += 1;
-            countrySortClickCount = 0;
+        	raiseCountryUnformattedPopulationSortClickCount();
             break;
         default:
             break;
         }
     }
 	
-    function isSecondClickOnSortElement(sortElementName){
-    	calculateClicks(sortElementName);
-    	return (countrySortClickCount > 0 && countrySortClickCount % 2 == 0) || (populationSortClickCount > 0 && populationSortClickCount % 2 == 0);
+    function countryNameIsSecondClick(){
+    	return (countryNameSortClickCount > 0 && countryNameSortClickCount % 2 == 0);
+    }
+    
+    function countryUnformattedPopulationIsSecondClick(){
+    	return (countryUnformattedPopulationSortClickCount > 0 && countryUnformattedPopulationSortClickCount % 2 == 0);
+    }
+    
+    function raiseCountryNameSortClickCount(){
+        countryNameSortClickCount += 1;
+        countryUnformattedPopulationSortClickCount = 0;
+    }
+    
+    function raiseCountryUnformattedPopulationSortClickCount(){
+        countryUnformattedPopulationSortClickCount += 1;
+        countryNameSortClickCount = 0;
     }
 	
-    function formatTextForPrint(key,data){
-        var value = data;
-        if(data){
-	        switch (key) {
-	        case "population":
-	            value = data.toLocaleString('en-US');
-	            break;
-	        case "currencies":
-	        	var tempValue = data.map( function(currency, index, data) { return currency.name});
-	        	value = tempValue.reduce( function(result, name, index, data) { return result + ", " + name; });
-	        	break;
-	        case "timezones":
-	        	value = data.reduce( function(result, timezone, index, data) { return result + ", " + timezone; });
-	        	break;
-	        default:
-	        	break;
-	        }
-        }
-		return value;
-	}
-	
-
+    
 	function changeTextToIdFormat(text){
     	if(text){
     		return text.replace(/[^a-zA-Z ]|\s+/g, "");
@@ -232,6 +226,41 @@ app.controller('countriesOfTheWorldCtrl', function($scope, $http, $location, $an
 		});
 		return json;
 	}
+	
+	function formatTextForPrint(key,data){
+        var value = data;
+        if(data){
+	        switch (key) {
+	        case "population":
+	            value = fomatNumber(data);
+	            break;
+	        case "currencies":
+	        	value = formatCurrencies(data);
+	        	break;
+	        case "timezones":
+	        	value = formatTimezones(data);
+	        	break;
+	        default:
+	        	break;
+	        }
+        }
+		return value;
+	}
+	
+    
+    function fomatNumber(number){
+    	return number.toLocaleString('en-US');
+    }
+    
+    function formatCurrencies(currencies){
+    	var tempValue = currencies.map( function(currency, index, data) { return currency.name});
+    	return tempValue.reduce( function(result, name, index, data) { return result + ", " + name; });
+    }
+    
+    function formatTimezones(timezones){
+    	return timezones.reduce( function(result, timezone, index, data) { return result + ", " + timezone; });
+    }
+
 	
 	function calculateCenterForMap(country){
 		if(country.latlng.length !== 2){
